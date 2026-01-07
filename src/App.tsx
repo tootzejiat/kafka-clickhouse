@@ -76,6 +76,7 @@ function App() {
     const stopLiveSimulation = async () => {
         clearInterval(liveInverval)
         clearInterval(insertInterval)
+        alert("Simulation Stopped")
     }
 
     return (
@@ -83,8 +84,8 @@ function App() {
             <button onClick={async () => { await getMonthlyUser() }}>Get Monthly Signed Up User Count</button>
             <Chart data={data} />
 
-            <button onClick={async () => { await startLiveSimulation() }}>Start Live Chart Streaming</button>
-            <button onClick={async () => { await stopLiveSimulation() }}>Stop Live Chart Streaming</button>
+            <button onClick={async () => { await startLiveSimulation() }}>Start Live Chart Simulation</button>
+            <button onClick={async () => { await stopLiveSimulation() }}>Stop Live Chart Simulation</button>
             <LiveChart data={liveData} />
         </div>
     )

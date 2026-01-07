@@ -1,7 +1,8 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { RechartsDevtools } from '@recharts/devtools';
+import { LiveData } from '../types';
 
-const LiveChart = ({ data }: { data: { count: number }[] }) => {
+const LiveChart = ({ data }: { data: LiveData[] | undefined }) => {
     return (
         <BarChart
             style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}

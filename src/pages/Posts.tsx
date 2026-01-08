@@ -11,6 +11,8 @@ export default function PostsPage() {
     const [page, setPage] = useState<number>(0)
     const ds = useRef<null>(null);
 
+    const footer = <Button label="Load More" onClick={() => setPage(page + 1)} />;
+
     const itemTemplate = (post: PostData) => {
         return (
             <div className="col-12">
@@ -19,20 +21,25 @@ export default function PostsPage() {
         );
     };
 
-    const footer = <Button label="Load More" onClick={() => setPage(page + 1)} />;
-
     useEffect(() => {
         const getPosts = async () => {
+            await dbClient.command({
+                query: `SYSTEM RELOAD DICTIONARY users_dict;`
+            })
+
             const resultSet = await dbClient.query({
-                query: `SELECT * FROM posts 
-                    ORDER BY created_at DESC 
+                query: `
+                    SELECT 
+                    p.*,
+                    dictGet('users_dict', 'username', p.user_id) AS username,
+                    dictGet('users_dict', 'country_code', p.user_id) AS country_code
+                    FROM posts AS p
+                    ORDER BY p.created_at DESC 
                     LIMIT 200 OFFSET ${page};`,
                 format: 'JSONEachRow',
             });
 
             const newPosts: PostData[] = await resultSet.json();
-
-            console.log(newPosts)
 
             setPosts((prev) => [...prev ?? [], ...newPosts ?? []])
         }
@@ -52,7 +59,7 @@ export default function PostsPage() {
                 inline
                 scrollHeight="50rem"
                 footer={footer}
-                header="Scroll Down to Load More" />
+            />
         </div>
     );
 }

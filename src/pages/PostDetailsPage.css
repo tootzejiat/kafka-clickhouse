@@ -1,0 +1,103 @@
+/* Container Layout */
+.post-details-container {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.post-details-wrapper {
+  width: 100%;
+  max-width: 900px;
+}
+
+/* Card Styling */
+.post-card {
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.post-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.post-title-text {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+/* Author Section */
+.author-info-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: var(--surface-hover);
+  border-radius: 8px;
+}
+
+.author-details .author-name {
+  font-weight: bolder;
+  color: var(--text-color);
+  display: block;
+}
+
+.author-details .author-location {
+  color: var(--text-color-secondary);
+  font-size: 0.9rem;
+}
+
+/* Content & Stats */
+.post-body-text {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--text-color);
+  margin-bottom: 2rem;
+}
+
+.post-footer-stats {
+  display: flex;
+  gap: 1.5rem;
+  color: var(--text-color-secondary);
+}
+
+.stat-item i {
+  margin-right: 0.5rem;
+}
+
+/* Comments Styling */
+.discussion-title {
+  margin: 0 0 1rem 0.5rem;
+}
+
+.comment-row {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.comment-row:last-child {
+  border-bottom: none;
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.comment-body {
+  margin: 0 0 1rem 0;
+  color: var(--text-color);
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}

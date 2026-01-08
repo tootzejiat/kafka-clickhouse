@@ -5,6 +5,7 @@ import { runCreatePostsMV } from "./migrations/create_posts_mv";
 import { dropPostsTable, runCreateKafkaPostsQueue, runCreatePostsTable } from "./migrations/create_posts_table";
 import { runCreateUserMV } from "./migrations/create_user_mv";
 import { dropUserTable, runCreateKafkaUserQueue, runCreateUserTable } from "./migrations/create_user_table";
+import { runCreateUsersDict } from "./migrations/create_users_dict";
 
 const runMigrations = async () => {
     try {
@@ -28,6 +29,9 @@ const runMigrations = async () => {
 
         //Create comments MV
         await runCreateCommentsMV()
+
+        //Create users dict
+        await runCreateUsersDict()
 
         const resultSet = await dbClient.query({
             query: 'SELECT count() FROM users;',

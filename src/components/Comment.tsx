@@ -1,15 +1,15 @@
 import { Avatar } from 'primereact/avatar';
 import './Comment.css'
-import { CommentData } from '../types';
+import { CommentsData } from '../types';
 
-function Comment({ data }: { data: CommentData }) {
+function Comment({ data }: { data: CommentsData }) {
     return (
         <div className="comment-container">
             <Avatar icon="pi pi-user" shape="circle" size="large" className="comment-avatar" />
             <div className="comment-content">
                 <div className="comment-meta">
-                    <span className="user-id">User: {data.user_id.slice(0, 8)}</span>
-                    <span className="comment-date">{new Date(data.created_at).toLocaleDateString()}</span>
+                    <span className="user-id">User: {data.comment_author}</span>
+                    <span className="comment-date">{new Date(data.comment_created_at).toLocaleDateString()}</span>
                 </div>
                 <p className="comment-text">{data.comment_text}</p>
                 <div className="comment-stats">

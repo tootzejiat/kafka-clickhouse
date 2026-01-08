@@ -9,7 +9,7 @@ services:
       - database
       - web
     command: >
-      sh -c "pip install confluent-kafka faker && 
+      sh -c "pip install confluent-kafka faker clickhouse-connect && 
              python ./insert-data.py"
 
   database:

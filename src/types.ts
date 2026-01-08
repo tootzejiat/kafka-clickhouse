@@ -30,9 +30,27 @@ const ChartType = {
 
 export type ChartType = typeof ChartType[keyof typeof ChartType];
 
+export interface PostDetailsData {
+    post_id: string; // uuid
+    author: string;
+    country_code: string;
+    title: string;
+    body: string;
+    category: string;
+    view_count: number;
+    post_created_at: string;
+    comment_author: string;
+    comment_id: string;
+    comment_text: string;
+    upvotes: number;
+    comment_created_at: string;
+    is_deleted: number;
+}
+
 export interface PostData {
-    post_id: string; // UUID
-    user_id: string; // UUID
+    post_id: string; // uuid
+    username: string;
+    country_code: string;
     title: string;
     body: string;
     category: string;
@@ -50,11 +68,12 @@ export interface CommentData {
     is_deleted: number;
 }
 
-export interface CommentData {
-    comment_id: string; // UUID
-    post_id: string;    // UUID
-    user_id: string;    // UUID
+export interface CommentsData {
+    comment_id: string;
     comment_text: string;
     upvotes: number;
-    created_at: string;
+    comment_created_at: string;
+    is_deleted: number;
+    comment_author: string;
 }
+

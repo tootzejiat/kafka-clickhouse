@@ -10,7 +10,14 @@ export const runCreateUsersDict = async () => {
                     country_code String
                 )
                 PRIMARY KEY user_id
-                SOURCE(CLICKHOUSE(TABLE 'users'))
+                SOURCE(CLICKHOUSE(
+                    TABLE 'users'
+                    USER 'ttj'
+                    PASSWORD 'ttj123'
+                    DB 'kafka_clickhouse'
+                    HOST 'localhost'
+                    PORT 9000
+                ))
                 LAYOUT(HASHED())
                 LIFETIME(MIN 300 MAX 600);
             `

@@ -1,0 +1,28 @@
+.custom-post-card {
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: solid white 1px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+}
+
+.view-count {
+  font-size: 0.85rem;
+}
+
+.post-body {
+  line-height: 1.6;
+  margin: 0;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}

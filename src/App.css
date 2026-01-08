@@ -12,3 +12,8 @@
   align-items: center;
   overflow: scroll;
 }
+
+.chart-container {
+  width: 100dvw;
+  overflow: scroll;
+}

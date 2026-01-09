@@ -5,15 +5,13 @@ import { ChartType, GeographyMonthlyUserData, StatusMonthlyUserData } from '../t
 
 export default function Chart({ data, type }: { data: GeographyMonthlyUserData[] | StatusMonthlyUserData[], type: ChartType }) {
     const minWidthPerPoint = 100;
-    const dynamicWidth = Math.max(window.innerWidth, data.length * minWidthPerPoint);
     return (
         <>
             {
                 type === 'geography' ?
                     <div className='chart-container'>
                         <ScatterChart
-                            width={dynamicWidth}
-                            style={{ maxHeight: '70vh', aspectRatio: 1.618, overflow: 'scroll', }}
+                            style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618, overflow: 'scroll', }}
                             responsive
                             margin={{
                                 top: 20,
@@ -36,7 +34,7 @@ export default function Chart({ data, type }: { data: GeographyMonthlyUserData[]
                     :
                     <div className='chart-container'>
                         <LineChart
-                            style={{ width: '100%', aspectRatio: 1.3, }}
+                            style={{ width: '100%', aspectRatio: 1.3, overflow: 'scroll', }}
                             responsive
                             data={data}
                             margin={{

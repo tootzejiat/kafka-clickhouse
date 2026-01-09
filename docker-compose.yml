@@ -1,6 +1,6 @@
 services:
   init-data:
-    image: python:3.11-slim
+    image: python:3.14.2-slim
     volumes:
       - .:/app
     working_dir: /app

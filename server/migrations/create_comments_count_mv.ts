@@ -1,6 +1,6 @@
 import { dbClient } from "../dbClient";
 
-export const runCreateCommentsCountTable = async () => {
+export const runCreateCommentsCountMV = async () => {
     try {
         await dbClient.command({
             query: `
@@ -10,8 +10,7 @@ export const runCreateCommentsCountTable = async () => {
                 post_id,
                 1 AS comment_count
             FROM comments
-            WHERE is_deleted=0
-            GROUP BY (post_id);
+            WHERE is_deleted=0 ;
             `
         });
     } catch (error) {

@@ -223,7 +223,7 @@ def verify_kafka_messages(topic, expected_count, sample_size=10):
 
 
 def run_complex_load_test(
-    user_count=300000, posts_per_user=1, comments_per_post=3, wait_time=15, verify=True
+    user_count=300000, posts_per_user=1, comments_per_post=3, wait_time=20, verify=True
 ):
     """Run a complex load test with proper synchronization and verification"""
 
@@ -334,6 +334,9 @@ def run_complex_load_test(
                     ["Tech", "Health", "Finance", "Education", "Entertainment"]
                 ),
                 "view_count": random.randint(0, 5000),
+                "created_at": fake.date_time_between(
+                    start_date="-2y", end_date="now"
+                ).strftime("%Y-%m-%d %H:%M:%S"),
             }
             produce_message("user_posts", post_data)
 
@@ -409,7 +412,7 @@ def run_complex_load_test(
 
         comment_count = 0
         for post_id in post_ids:
-            for _ in range(fake.random_number()):
+            for _ in range(random.randint(1, 3)):
                 comment_data = {
                     # NO comment_id - ClickHouse generates it
                     "post_id": post_id,  # Use actual post_id from ClickHouse
@@ -496,6 +499,6 @@ if __name__ == "__main__":
         user_count=300000,
         posts_per_user=1,
         comments_per_post=3,
-        wait_time=15,
+        wait_time=20,
         verify=False,
     )

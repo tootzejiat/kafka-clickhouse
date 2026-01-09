@@ -77,3 +77,19 @@ export interface CommentsData {
     comment_author: string;
 }
 
+export interface EngagementRatio {
+    post_id: string; // uuid
+    username: string;
+    title: string;
+    category: string;
+    view_count: number;
+    created_at: string;
+    total_comments: number;
+    rank_in_category: number;
+    ratio: number;
+}
+
+export interface HourlyActivityData {
+    hour: number,
+    avg_ratio_per_hour: number
+}

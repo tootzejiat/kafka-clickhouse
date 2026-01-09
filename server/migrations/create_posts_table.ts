@@ -32,7 +32,8 @@ export const runCreateKafkaPostsQueue = async () => {
                 title String,
                 body String,
                 category LowCardinality(String), 
-                view_count UInt32
+                view_count UInt32,
+                created_at DateTime
             ) 
             ENGINE = Kafka()
             SETTINGS

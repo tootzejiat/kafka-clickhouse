@@ -56,7 +56,7 @@ const LiveChart = ({ polling }: { polling: boolean }) => {
     return (
         <div className='chart-container'>
             <BarChart
-                style={{ maxHeight: '70vh', aspectRatio: 1.618 }}
+                style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}
                 responsive
                 data={liveData}
                 margin={{

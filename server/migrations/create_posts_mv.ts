@@ -5,7 +5,7 @@ export const runCreatePostsMV = async () => {
         await dbClient.command({
             query: `
             CREATE MATERIALIZED VIEW IF NOT EXISTS posts_mv TO posts AS
-            SELECT user_id, title, body, category, view_count
+            SELECT user_id, title, body, category, view_count, created_at
             FROM kafka_posts_queue;
             `
         });

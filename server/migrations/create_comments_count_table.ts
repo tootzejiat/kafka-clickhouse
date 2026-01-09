@@ -9,7 +9,7 @@ export const runCreateCommentsCountTable = async () => {
                     post_id UUID,
                     comment_count UInt64
                 ) ENGINE = SummingMergeTree()
-                ORDER BY (post_id);
+                ORDER BY post_id;
             `,
         })
     } catch (e) {

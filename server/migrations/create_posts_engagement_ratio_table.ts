@@ -5,10 +5,10 @@ export const runCreatePostsEngagementRatioTable = async () => {
         await dbClient.command({
             query: `
                 CREATE TABLE IF NOT EXISTS posts_engagement_ratio (
-                    post_id UUID,
-                    ratio UInt32
+                    hour DateTime,
+                    avg_ratio_per_hour AggregateFunction(avg, UInt64)
                 ) ENGINE = AggregatingMergeTree()
-                ORDER BY (ratio);
+                ORDER BY (hour);
             `,
         })
     } catch (e) {

@@ -93,3 +93,14 @@ export interface HourlyActivityData {
     hour: number,
     avg_ratio_per_hour: number
 }
+
+export interface CountryVSGlobalEngagementData {
+    country_avg: number;
+    global_avg: number;
+}
+
+export interface ViralVelocityData {
+    post_id: string;
+    hours_since_posted: number;
+    ratio: number;
+}

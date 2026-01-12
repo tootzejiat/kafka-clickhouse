@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import Chart from './components/Chart'
 import { dbClient } from './client'
-import { ChartType, EngagementRatio, GeographyMonthlyUserData, HourlyActivityData, StatusMonthlyUserData } from './types'
+import { ChartType, CountryVSGlobalEngagementData, EngagementRatio, GeographyMonthlyUserData, HourlyActivityData, StatusMonthlyUserData, ViralVelocityData } from './types'
 import LiveChart from './components/LiveChart'
 import useStreaming from './hooks/useStreaming'
 import { Button } from 'primereact/button'
@@ -10,6 +10,8 @@ import { Dropdown } from 'primereact/dropdown'
 import { NavLink } from 'react-router'
 import EngagementRatioChart from './components/EngagementRatioChart'
 import HourlyActivityChart from './components/HourlyActivityChart'
+import { CountryVSGlobalChart } from './components/CountryVSGlobalAverageChart'
+import { ViralVelocityChart } from './components/ViralVelocityChart'
 
 function App() {
     const [data, setData] = useState<StatusMonthlyUserData[] | GeographyMonthlyUserData[]>([])
@@ -17,9 +19,31 @@ function App() {
     const [isPolling, setIsPollling] = useState<boolean>(false)
     const [engagementRatio, setEngagementRatio] = useState<EngagementRatio[]>();
     const [hourlyActivity, setHourlyActivity] = useState<HourlyActivityData[]>();
+    const [countryCode, setCountryCode] = useState<{ country_code: string }>()
+    const [countryVsGlobal, setCountryVsGlobal] = useState<CountryVSGlobalEngagementData[]>([{ country_avg: 0, global_avg: 0 }])
+    const [viralVelocity, setViralVelocity] = useState<ViralVelocityData[]>()
     const { simulateStreamingData, endSimulation } = useStreaming();
 
     const dropdownOptions = [{ name: "By Geography", code: "geography" }, { name: "By Status", code: "status" }]
+    const [countryCodes, setCountryCodes] = useState<{ country_code: string }[]>([{ country_code: "US" }])
+
+    useEffect(() => {
+        const getCountryCodes = async () => {
+            const resultSet = await dbClient.query({
+                query: `SELECT country_code FROM users GROUP BY country_code`,
+                format: 'JSONEachRow',
+            });
+
+            const data: { country_code: string }[] = await resultSet.json();
+
+            console.log(data)
+
+            setCountryCodes(data)
+        }
+
+        getCountryCodes()
+
+    }, [])
 
     const getMonthlyUser = async (type: ChartType) => {
         try {
@@ -131,9 +155,10 @@ function App() {
         const resultSet = await dbClient.query({
             query: `
                     SELECT 
-                        toHour(toStartOfHour(created_at)) as hour,
-                        round(avg(if(view_count > 0, (dictGet('comments_count_dict', 'comment_count', post_id) / view_count) * 100, 0)), 2) AS avg_ratio_per_hour
-                    FROM posts
+                        hour,
+                        round(avgMerge(avg_ratio_per_hour)) AS avg_ratio_per_hour
+                    FROM hourly_engagement_ratio
+                    WHERE country_code = '${countryCode!.country_code}'
                     GROUP BY hour
                     ORDER BY hour ASC
                     WITH FILL FROM 0 TO 24 STEP 1;
@@ -143,8 +168,49 @@ function App() {
 
         const hourlyActivityData: HourlyActivityData[] = await resultSet.json();
 
-        console.log(hourlyActivity)
+        console.log(hourlyActivityData)
         setHourlyActivity(hourlyActivityData)
+    }
+
+    const getCountryVsGlobalEngagement = async () => {
+        const resultSet = await dbClient.query({
+            query: `
+                    SELECT 
+                        (SELECT 
+                            round(avg(if(view_count > 0, (dictGet('comments_count_dict', 'comment_count', post_id) / view_count) * 100, 0)), 2)
+                        FROM posts
+                        WHERE dictGet('users_dict', 'country_code', posts.user_id) = '${countryCode!.country_code}') AS country_avg,
+                        round(avg(if(view_count > 0, (dictGet('comments_count_dict', 'comment_count', post_id) / view_count) * 100, 0)), 2) AS global_avg
+                    FROM posts ;
+                    `,
+            format: 'JSONEachRow',
+        });
+
+        const countryVsGlobalData: CountryVSGlobalEngagementData[] = await resultSet.json();
+
+        console.log(countryVsGlobalData)
+        setCountryVsGlobal(countryVsGlobalData)
+    }
+
+    const getViralVelocity = async () => {
+        const resultSet = await dbClient.query({
+            query: `
+                SELECT
+                    post_id,
+                    dateDiff('hour', toDateTime(posts.created_at), now()) AS hours_since_posted,
+                    round(if(view_count > 0, (dictGet('comments_count_dict', 'comment_count', post_id) / view_count) * 100, 0), 2) AS ratio
+                FROM posts
+                WHERE
+                    created_at >= now() - INTERVAL 72 HOUR
+                    AND created_at < now() - INTERVAL 48 HOUR; `,
+            format: 'JSONEachRow',
+        });
+
+        const viralVelocityData: ViralVelocityData[] = await resultSet.json();
+
+        console.log(viralVelocityData)
+        setViralVelocity(viralVelocityData)
+
     }
 
     console.log('page refreshed')
@@ -155,7 +221,7 @@ function App() {
                 <NavLink to="/posts">Posts</NavLink>
             </nav>
 
-            <Button onClick={async () => { await getHourlyActivity() }} label='test' />
+            <Button onClick={async () => { await getViralVelocity() }} label='test' />
             <Button label='Get Monthly Signed Up User Count' onClick={async () => { await getMonthlyUser(chartType.code) }} />
             <label htmlFor="charts"> Chart Type</label>
             <Dropdown options={dropdownOptions} optionLabel='name' value={chartType} onChange={(e) => { setChartType(e.value) }} id="charts" />
@@ -169,7 +235,14 @@ function App() {
             <Button onClick={async () => { await getPostEngagementRatio() }} label='Get Top Post Engagement Ratio By Category' />
 
             <HourlyActivityChart data={hourlyActivity} />
-            <Button onClick={async () => { await getHourlyActivity() }} label='Get Hourly Post Engagement Activity' />
+            <Dropdown options={countryCodes} value={countryCode} optionLabel='country_code' onChange={(e) => { setCountryCode(e.value) }} />
+            <Button onClick={async () => { await getHourlyActivity() }} label='Get Hourly Post Engagement Activity By Country' />
+
+            <CountryVSGlobalChart data={countryVsGlobal} />
+            <Button onClick={async () => { await getCountryVsGlobalEngagement() }} label='Get Country VS Global Engagement Ratio' />
+
+            <ViralVelocityChart data={viralVelocity} />
+            <Button onClick={async () => { await getViralVelocity() }} label='Get Viral Velocity' />
         </div>
     )
 }

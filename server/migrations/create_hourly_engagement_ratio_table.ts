@@ -1,14 +1,15 @@
 import { dbClient } from "../dbClient";
 
-export const runCreatePostsEngagementRatioTable = async () => {
+export const runCreateHourlyEngagementRatioTable = async () => {
     try {
         await dbClient.command({
             query: `
-                CREATE TABLE IF NOT EXISTS posts_engagement_ratio (
-                    hour DateTime,
-                    avg_ratio_per_hour AggregateFunction(avg, UInt64)
+                CREATE TABLE IF NOT EXISTS hourly_engagement_ratio (
+                    hour UInt8,
+                    country_code LowCardinality(String),
+                    avg_ratio_per_hour AggregateFunction(avg, Float64),
                 ) ENGINE = AggregatingMergeTree()
-                ORDER BY (hour);
+                ORDER BY (country_code, hour);
             `,
         })
     } catch (e) {

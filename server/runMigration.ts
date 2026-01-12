@@ -4,7 +4,8 @@ import { runCreateCommentsCountMV } from "./migrations/create_comments_count_mv"
 import { runCreateCommentsCountTable } from "./migrations/create_comments_count_table";
 import { runCreateCommentsMV } from "./migrations/create_comments_mv";
 import { dropCommentsTable, runCreateCommentsTable, runCreateKafkaCommentsQueue } from "./migrations/create_comments_table";
-import { runCreatePostsEngagementRatioTable } from "./migrations/create_posts_engagement_ratio_table";
+import { runCreateHourlyEngagementMV } from "./migrations/create_hourly_engagement_ratio_mv";
+import { runCreateHourlyEngagementRatioTable } from "./migrations/create_hourly_engagement_ratio_table";
 import { runCreatePostsMV } from "./migrations/create_posts_mv";
 import { dropPostsTable, runCreateKafkaPostsQueue, runCreatePostsTable } from "./migrations/create_posts_table";
 import { runCreateUserMV } from "./migrations/create_user_mv";
@@ -16,6 +17,7 @@ const runMigrations = async () => {
         //Create user table
         await runCreateUserTable()
         await runCreateKafkaUserQueue()
+        await runCreateUsersDict()
 
         //Create posts table
         await runCreatePostsTable()
@@ -27,8 +29,6 @@ const runMigrations = async () => {
         await runCreateCommentsCountTable()
         await runCommentsCountDict()
 
-        //Create Post Engagement Table
-        await runCreatePostsEngagementRatioTable()
 
         //Create user MV
         await runCreateUserMV()
@@ -40,8 +40,13 @@ const runMigrations = async () => {
         await runCreateCommentsMV()
         await runCreateCommentsCountMV()
 
-        //Create users dict
-        await runCreateUsersDict()
+
+        //Create Post Engagement Table
+
+        setTimeout(async () => {
+            await runCreateHourlyEngagementRatioTable()
+            await runCreateHourlyEngagementMV()
+        }, 3000);
 
         const resultSet = await dbClient.query({
             query: 'SELECT count() FROM users;',
